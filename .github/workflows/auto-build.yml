@@ -50,7 +50,7 @@ jobs:
           apt-get update -qq
           apt-get install -y \
             git-lfs libglib2.0-dev libip4tc-dev libipset-dev libnfnetlink-dev bubblewrap \
-            libnftnl-dev libnl-nf-3-dev libpopt-dev libsystemd-dev perl-xs-dev ocaml-findlib \
+            libnftnl-dev libnl-nf-3-dev libpopt-dev libsystemd-dev perl-xs-dev \
             kpartx clang llvm libpcap-dev xz-utils python-is-python3 libbpf-dev linux-libc-dev
 
       - uses: actions/checkout@v4
@@ -74,6 +74,8 @@ jobs:
 
       - name: Build global deps
         run: |
+          set -x
+          source $HOME/.bashrc
           eval $(opam env --root=/opt/opam --set-root)
           mkdir global_deps
           cd global_deps
@@ -126,6 +128,8 @@ jobs:
       # https://github.com/vyos/vyos-1x/commit/dd5f9c19550c1f8ccb5e93bab0b604f9f9e1383e
       - name: Fix missing internal blob file
         run: |
+          set -x
+          source $HOME/.bashrc
           git clone --recursive https://github.com/vyos/vyos-1x \
             -b current --single-branch vyos-build/scripts/package-build/vyos-1x/vyos-1x
           cp data/reftree.cache vyos-build/scripts/package-build/vyos-1x/vyos-1x/data/reftree.cache
@@ -133,6 +137,8 @@ jobs:
       - name: Build Image Packages
         run: |
           cd vyos-build/scripts/package-build
+          set -x
+          source $HOME/.bashrc
           packages=$(ls .)
           ignore_packages=(amazon-cloudwatch-agent amazon-ssm-agent xen-guest-agent)
           for package in $packages; do
@@ -161,6 +167,8 @@ jobs:
       - name: Apply Packages
         run: |
           cd vyos-build
+          set -x
+          source $HOME/.bashrc
           # seems donot need filtering needed here, the build sciprt will install only the necessary packages
           deb_files=$(find scripts/package-build -name "*.deb" -type f | \
             grep -v -- -dbg | \
@@ -221,6 +229,8 @@ jobs:
         id: build_generic_iso
         run: |
           cd vyos-build
+          set -x
+          source $HOME/.bashrc
 
           # setup db directory for vnstat
           echo '[[includes_chroot]]' >> data/build-flavors/generic.toml
