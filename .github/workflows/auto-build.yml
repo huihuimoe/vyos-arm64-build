@@ -45,9 +45,9 @@ jobs:
     steps:
       - name: Install Dependencies
         run: |
+          source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
           set -x
           echo "HOME: $HOME"
-          source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
           echo "PATH: $PATH"
           command -v go
           command -v ocamlfind
@@ -64,8 +64,8 @@ jobs:
       - name: "Initialization: set env variables"
         id: set_env_variables
         run: |
-          set -x
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
+          set -x
           if [ -n "${{ github.event.inputs.BUILD_BY }}" ]; then
             echo "BUILD_BY=${{ github.event.inputs.BUILD_BY }}" >> $GITHUB_ENV
           fi
@@ -80,8 +80,8 @@ jobs:
 
       - name: Build global deps
         run: |
-          set -x
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
+          set -x
           eval $(opam env --root=/opt/opam --set-root)
           mkdir global_deps
           cd global_deps
@@ -134,8 +134,8 @@ jobs:
       # https://github.com/vyos/vyos-1x/commit/dd5f9c19550c1f8ccb5e93bab0b604f9f9e1383e
       - name: Fix missing internal blob file
         run: |
-          set -x
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
+          set -x
           git clone --recursive https://github.com/vyos/vyos-1x \
             -b current --single-branch vyos-build/scripts/package-build/vyos-1x/vyos-1x
           cp data/reftree.cache vyos-build/scripts/package-build/vyos-1x/vyos-1x/data/reftree.cache
@@ -143,8 +143,8 @@ jobs:
       - name: Build Image Packages
         run: |
           cd vyos-build/scripts/package-build
-          set -x
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
+          set -x
           packages=$(ls .)
           ignore_packages=(amazon-cloudwatch-agent amazon-ssm-agent xen-guest-agent)
           for package in $packages; do
@@ -173,8 +173,8 @@ jobs:
       - name: Apply Packages
         run: |
           cd vyos-build
-          set -x
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
+          set -x
           # seems donot need filtering needed here, the build sciprt will install only the necessary packages
           deb_files=$(find scripts/package-build -name "*.deb" -type f | \
             grep -v -- -dbg | \
@@ -235,8 +235,8 @@ jobs:
         id: build_generic_iso
         run: |
           cd vyos-build
-          set -x
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
+          set -x
 
           # setup db directory for vnstat
           echo '[[includes_chroot]]' >> data/build-flavors/generic.toml
