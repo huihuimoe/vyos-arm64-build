@@ -24,6 +24,9 @@ env:
 jobs:
   build_generic_iso:
     runs-on: ubuntu-24.04-arm
+    defaults:
+      run:
+        shell: bash
     if: github.repository == 'huihuimoe/vyos-arm64-build'
     permissions:
       contents: write
@@ -157,6 +160,7 @@ jobs:
       - name: Apply Packages
         run: |
           cd vyos-build
+          # seems donot need filtering needed here, the build sciprt will install only the necessary packages
           deb_files=$(find scripts/package-build -name "*.deb" -type f | \
             grep -v -- -dbg | \
             grep -v -- -dev | \
