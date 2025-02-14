@@ -18,21 +18,22 @@ env:
   DEBIAN_MIRROR: http://deb.debian.org/debian/
   DEBIAN_SECURITY_MIRROR: http://deb.debian.org/debian-security
   VYOS_MIRROR: https://packages.vyos.net/repositories/current/
+  # this repo doesn't seem to be updated anymore
   # https://dev.packages.vyos.net/?dir=repositories/current/dists/current
   # VYOS_MIRROR: https://rolling-packages.vyos.net/current/
 
 jobs:
   build_generic_iso:
     runs-on: ubuntu-24.04-arm
-    defaults:
-      run:
-        shell: bash
     if: github.repository == 'huihuimoe/vyos-arm64-build'
     permissions:
       contents: write
     container:
       image: vyos/vyos-build:current-arm64
       options: --sysctl net.ipv6.conf.lo.disable_ipv6=0 --privileged --user root
+    defaults:
+      run:
+        shell: bash
     outputs:
       BUILD_BY: ${{ steps.set_env_variables.outputs.BUILD_BY }}
       build_version: ${{ steps.set_env_variables.outputs.build_version }}
