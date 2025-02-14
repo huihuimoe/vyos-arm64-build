@@ -40,6 +40,15 @@ jobs:
 
     steps:
       ### Initialization ###
+      - name: Install Dependencies
+        run: |
+          # Install missing packages
+          apt-get update -qq
+          apt-get install -y \
+            git-lfs libglib2.0-dev libip4tc-dev libipset-dev libnfnetlink-dev bubblewrap \
+            libnftnl-dev libnl-nf-3-dev libpopt-dev libsystemd-dev perl-xs-dev ocaml-findlib
+            kpartx clang llvm libpcap-dev xz-utils python-is-python3 libbpf-dev linux-libc-dev
+
       - uses: actions/checkout@v4
         with:
           lfs: true
@@ -58,15 +67,6 @@ jobs:
           echo "TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
           echo "PREVIOUS_SUCCESS_BUILD_TIMESTAMP=$(cat version.json | jq -r '.[0].timestamp')" >> $GITHUB_OUTPUT
           echo "BUILD_BY=$BUILD_BY" >> $GITHUB_OUTPUT
-
-      - name: Install Dependencies
-        run: |
-          # Install missing packages
-          apt-get update -qq
-          apt-get install -y \
-            libglib2.0-dev libip4tc-dev libipset-dev libnfnetlink-dev bubblewrap \
-            libnftnl-dev libnl-nf-3-dev libpopt-dev libsystemd-dev perl-xs-dev ocaml-findlib
-            kpartx clang llvm libpcap-dev xz-utils python-is-python3 libbpf-dev linux-libc-dev
 
       - name: Build global deps
         run: |
