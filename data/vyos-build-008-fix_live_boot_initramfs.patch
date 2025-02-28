@@ -1,0 +1,13 @@
+diff --git a/data/live-build-config/hooks/live/00-manifest.binary b/data/live-build-config/hooks/live/00-manifest.binary
+index 4bbf5bd8..2b5f8f8a 100755
+--- a/data/live-build-config/hooks/live/00-manifest.binary
++++ b/data/live-build-config/hooks/live/00-manifest.binary
+@@ -2,3 +2,8 @@
+ 
+ echo I: Backwards compat packages.txt
+ echo "ii  vyatta-version " > live/packages.txt
++
++cd boot
++if [ ! -f initrd.img ] && ln -s initrd.img-* initrd.img
++if [ ! -f vmlinuz ] && ln -s vmlinuz-* vmlinuz
++cd ..
