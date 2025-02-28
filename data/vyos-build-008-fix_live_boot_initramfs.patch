@@ -7,7 +7,7 @@ index 4bbf5bd8..2b5f8f8a 100755
  echo I: Backwards compat packages.txt
  echo "ii  vyatta-version " > live/packages.txt
 +
-+cd boot
++cd live
 +if [ ! -f initrd.img ] && ln -s initrd.img-* initrd.img
 +if [ ! -f vmlinuz ] && ln -s vmlinuz-* vmlinuz
 +cd ..
