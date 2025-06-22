@@ -3,8 +3,7 @@ system {
     login {
         user vyos {
             authentication {
-                encrypted-password "$6$rounds=656000$SJsG87tq0bbBWrqZ$BRzd3F6tTbAjGZrH.Pja3qxeABa2l47hSFUWAdqyaeZxMPo7vsrzlfmkngu9HklJMUdeBqrVxbeGfyZ0DFDg30"
-                // plaintext-password "vyos"
+                encrypted-password "$6$rounds=656000$Uh9Fx/JsPWFTpfIO$DPQOFL8ThwtckZOrIEbGMwj6WNZnxV3ZfS/UuxuONg0oMpEDR350YkkYOdjcZWpsB9K1XHrOmBFtI34usaqvs."
             }
         }
     }
@@ -55,5 +54,13 @@ system {
 
 interfaces {
     loopback lo {
+    }
+    ethernet eth0 {
+        address dhcp
+    }
+}
+
+service {
+    ssh {
     }
 }
