@@ -1,0 +1,14 @@
+diff --git a/data/live-build-config/includes.chroot/etc/initramfs-tools/hooks/10-vyos-addons b/data/live-build-config/includes.chroot/etc/initramfs-tools/hooks/10-vyos-addons
+index b9190971..acce12dc 100755
+--- a/data/live-build-config/includes.chroot/etc/initramfs-tools/hooks/10-vyos-addons
++++ b/data/live-build-config/includes.chroot/etc/initramfs-tools/hooks/10-vyos-addons
+@@ -16,6 +16,9 @@ esac
+ # include listed modules to initramfs but not load them without the necessity
+ manual_add_modules igb ixgbe ixgbevf i40e i40evf
+ 
++manual_add_modules mmc_core mmc_block sdhci sdhci-pltfm
++manual_add_modules dw_mmc dw_mmc-pltfm dw_mmc_rockchip pl330 dwmac-rk
++
+ # include modules from file (one per line) to initramfs but not load them without the necessity
+ # add_modules_from_file /tmp/modlist
+ 
