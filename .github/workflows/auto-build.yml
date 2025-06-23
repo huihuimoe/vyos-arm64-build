@@ -134,9 +134,9 @@ jobs:
             #   cp _build/libvyosconfig.so /usr/lib/libvyosconfig.so.0
             # fi
 
-            #if [ "${global_dep}" = "live-boot" ]; then
-            #  sed -i '\:echo /sys/block:s:|fd:|fd|\\*$:' components/9990-misc-helpers.sh
-            #fi
+            if [ "${global_dep}" = "live-boot" ]; then
+              sed -i '\:echo /sys/block:s:|fd:|fd|\\*$:' components/9990-misc-helpers.sh
+            fi
 
             dpkg-buildpackage -b -us -uc -tc
             cd ..

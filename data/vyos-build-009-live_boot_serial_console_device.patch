@@ -1,5 +1,5 @@
 diff --git a/data/live-build-config/hooks/live/01-live-serial.binary b/data/live-build-config/hooks/live/01-live-serial.binary
-index 05785da7..a31e70a5 100755
+index 05785da7..b3b259eb 100755
 --- a/data/live-build-config/hooks/live/01-live-serial.binary
 +++ b/data/live-build-config/hooks/live/01-live-serial.binary
 @@ -3,8 +3,8 @@
@@ -8,42 +8,42 @@ index 05785da7..a31e70a5 100755
  
 -KVM_CONSOLE="console=ttyS0,115200 console=tty0"
 -SERIAL_CONSOLE="console=tty0 console=ttyS0,115200"
-+KVM_CONSOLE="console=ttyS2,1500000 console=tty0 earlycon=uart8250,mmio32,0xff130000"
++KVM_CONSOLE="console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32"
 +SERIAL_CONSOLE="console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32"
  
  # Grub.cfg Update
  GRUB_MENUENTRY=$(sed -e '/menuentry.*hotkey.*/,/^}/!d' -e 's/--hotkey=l//g' $GRUB_PATH)
 diff --git a/data/live-build-config/includes.chroot/opt/vyatta/etc/grub/default-union-grub-entry b/data/live-build-config/includes.chroot/opt/vyatta/etc/grub/default-union-grub-entry
-index 49f4afc4..df5da077 100644
+index 49f4afc4..52012dbc 100644
 --- a/data/live-build-config/includes.chroot/opt/vyatta/etc/grub/default-union-grub-entry
 +++ b/data/live-build-config/includes.chroot/opt/vyatta/etc/grub/default-union-grub-entry
 @@ -1,20 +1,20 @@
  menuentry "VyOS  (KVM console)" {
 -        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=ttyS0,115200 console=tty0
-+        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=ttyS2,1500000 console=tty0 earlycon=uart8250,mmio32
++        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32${serial_addr}
          initrd /boot//initrd.img
  }
  
  menuentry "VyOS  (Serial console)" {
 -        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=tty0 console=ttyS0,115200
-+        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=tty0 console=ttyS2,1500000 earlycon=uart8250,mmio32
++        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32${serial_addr}
          initrd /boot//initrd.img
  }
  
  menuentry "Lost password change  (KVM console)" {
 -        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=ttyS0,115200 console=tty0 init=/opt/vyatta/sbin/standalone_root_pw_reset
-+        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=ttyS2,1500000 console=tty0 earlycon=uart8250,mmio32 init=/opt/vyatta/sbin/standalone_root_pw_reset
++        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32${serial_addr} init=/opt/vyatta/sbin/standalone_root_pw_reset
          initrd /boot//initrd.img
  }
  
  menuentry "Lost password change  (Serial console)" {
 -        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=tty0 console=ttyS0,115200 init=/opt/vyatta/sbin/standalone_root_pw_reset
-+        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=tty0 console=ttyS2,1500000 earlycon=uart8250,mmio32 init=/opt/vyatta/sbin/standalone_root_pw_reset
++        linux /boot//vmlinuz boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 udev.exec_delay=3 vyos-union=/boot/ console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32${serial_addr} init=/opt/vyatta/sbin/standalone_root_pw_reset
          initrd /boot//initrd.img
  }
  
 diff --git a/scripts/image-build/build-vyos-image b/scripts/image-build/build-vyos-image
-index 3275c5de..9e19c794 100755
+index 3275c5de..f7723fba 100755
 --- a/scripts/image-build/build-vyos-image
 +++ b/scripts/image-build/build-vyos-image
 @@ -624,8 +624,8 @@ DOCUMENTATION_URL="{build_config['documentation_url']}"
@@ -52,8 +52,8 @@ index 3275c5de..9e19c794 100755
                  --binary-image iso-hybrid \
 -                --bootappend-live "boot=live components hostname=vyos username=live nopersistence noautologin nonetworking union=overlay console=ttyS0,115200 console=tty0 net.ifnames=0 biosdevname=0" \
 -                --bootappend-live-failsafe "live components memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal console=ttyS0,115200 console=tty0 net.ifnames=0 biosdevname=0" \
-+                --bootappend-live "boot=live components hostname=vyos username=live nopersistence noautologin nonetworking union=overlay console=ttyS2,1500000 console=tty0 earlycon=uart8250,mmio32 net.ifnames=0 biosdevname=0" \
-+                --bootappend-live-failsafe "live components memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal console=ttyS2,1500000 console=tty0 earlycon=uart8250,mmio32 net.ifnames=0 biosdevname=0" \
++                --bootappend-live "boot=live components hostname=vyos username=live nopersistence noautologin nonetworking union=overlay console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32 net.ifnames=0 biosdevname=0" \
++                --bootappend-live-failsafe "live components memtest noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal console=tty1 console=ttyS2,1500000 earlycon=uart8250,mmio32 net.ifnames=0 biosdevname=0" \
                  --bootloaders "{{bootloaders}}" \
                  --checksums "sha256" \
                  --chroot-squashfs-compression-type "{{squashfs_compression_type}}" \
