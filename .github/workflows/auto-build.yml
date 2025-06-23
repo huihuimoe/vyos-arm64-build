@@ -135,7 +135,16 @@ jobs:
             # fi
 
             if [ "${global_dep}" = "live-boot" ]; then
-              sed -i '\:echo /sys/block:s:|fd:|fd|\\*$:' components/9990-misc-helpers.sh
+              git config --global user.email "you@example.com"
+              git config --global user.name "Your Name"
+              git remote add salsa https://salsa.debian.org/live-team/live-boot.git
+              git fetch --tags salsa
+              git merge debian/1%20250225 || true
+              git checkout --ours .
+              git add .
+              #git merge --continue
+              git commit -m merge
+              git checkout origin/current debian/control
             fi
 
             dpkg-buildpackage -b -us -uc -tc
