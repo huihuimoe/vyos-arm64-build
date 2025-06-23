@@ -117,7 +117,7 @@ jobs:
             udp-broadcast-relay
             hvinfo
             # Architecture:all, can install directly
-            # live-boot
+            live-boot
           )
           for global_dep in ${global_deps[@]}; do
             git clone https://github.com/vyos/$global_dep
@@ -133,6 +133,10 @@ jobs:
             #   ./build.sh
             #   cp _build/libvyosconfig.so /usr/lib/libvyosconfig.so.0
             # fi
+
+            #if [ "${global_dep}" = "live-boot" ]; then
+            #  sed -i '\:echo /sys/block:s:|fd:|fd|\\*$:' components/9990-misc-helpers.sh
+            #fi
 
             dpkg-buildpackage -b -us -uc -tc
             cd ..
@@ -177,7 +181,8 @@ jobs:
           cp data/config.boot.default vyos-build/data/live-build-config/includes.chroot/opt/vyatta/etc/
           cp data/config.boot.dhcp vyos-build/data/live-build-config/includes.chroot/opt/vyatta/etc/
           # fix kernel config
-          patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-001-kernel_config.patch
+          # patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-001-kernel_config.patch
+          cp data/vyos_defconfig.rk vyos-build/scripts/package-build/linux-kernel/arch/arm64/configs/vyos_defconfig
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-002-mksquashfs_universal.patch
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-003-fix_hardcoded_x86_64.patch
           # fix on https://github.com/vyos/vyos-build/commit/82a40e68c7e4b3ea45fb2bbc4a1a7cff92e41942
@@ -188,7 +193,6 @@ jobs:
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-007-no_sbsign.patch
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-008-fix_live_boot_initramfs_link.patch
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-009-live_boot_serial_console_device.patch
-          patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-700-rk-modules.patch
           # https://github.com/vyos/vyos-build/blob/fd737172f1068870fe1ededbe9b2ed4a86663acd/data/live-build-config/includes.chroot/var/lib/shim-signed/mok/README.md
           if [ -f data/mok/MOK.key ]; then
             # https://github.com/vyos/vyos-build/commit/d552f7f8c38d7ad3bd28d9019a58b57e41b07f0b
@@ -369,7 +373,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
-    if: github.ref_name == "${{ github.event.repository.default_branch }}"
+    if: github.ref_name == 'master'
     steps:
       - uses: actions/checkout@v4
       - name: Clone vyos-build repo
