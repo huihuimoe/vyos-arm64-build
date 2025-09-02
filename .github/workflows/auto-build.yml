@@ -93,51 +93,6 @@ jobs:
           echo "TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
           echo "PREVIOUS_SUCCESS_BUILD_TIMESTAMP=$(cat version.json | jq -r '.[0].timestamp')" >> $GITHUB_OUTPUT
 
-      - name: Build global deps
-        run: |
-          source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
-          set -ex
-          eval $(opam env --root=/opt/opam --set-root)
-          mkdir global_deps
-          cd global_deps
-          global_deps=(
-            libvyosconfig
-            vyatta-bash
-            vyatta-biosdevname
-            vyatta-cfg
-            # https://github.com/vyos/vyos-1x/commit/d6a82c134bed0b0921595928b7ec600b2935327b
-            # vyatta-wanloadbalance
-            vyos-utils
-            # Architecture:all, can install directly
-            # vyos-user-utils
-            vyos-http-api-tools
-            # Architecture:all, can install directly
-            # vyos-cloud-init
-            ipaddrcheck
-            udp-broadcast-relay
-            hvinfo
-            # Architecture:all, can install directly
-            # live-boot
-          )
-          for global_dep in ${global_deps[@]}; do
-            git clone https://github.com/vyos/$global_dep
-            cd $global_dep
-
-            echo "y" | mk-build-deps --install --remove
-
-            # should update libvyosconfig due to hardcode on vyos-1x
-            # https://github.com/vyos/vyos-1x/blob/e90a2781f9eae555097e078b9b11dd0dca6c0acd/python/vyos/configtree.py#L22
-            # that will failed on reftree.cache
-            # 2025.03.05: fixed on https://github.com/vyos/vyos-1x/commit/731195c7adb21208767199f5487dfdf29ce09380
-            # if [ "${global_dep}" = "libvyosconfig" ]; then
-            #   ./build.sh
-            #   cp _build/libvyosconfig.so /usr/lib/libvyosconfig.so.0
-            # fi
-
-            dpkg-buildpackage -b -us -uc -tc
-            cd ..
-          done
-
       - name: Checkout vyos-build repo
         uses: actions/checkout@v5
         with:
@@ -211,7 +166,8 @@ jobs:
           cd vyos-build/scripts/package-build
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
           set -ex
-          packages=$(ls .)
+          # packages=$(ls .)
+          packages="vyos-1x"
           ignore_packages=(amazon-cloudwatch-agent amazon-ssm-agent xen-guest-agent)
           for package in $packages; do
             [ ! -d $package ] && continue
