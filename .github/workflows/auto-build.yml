@@ -232,19 +232,6 @@ jobs:
             fi
             cp $deb_file packages
           done
-          global_deb_files=$(find ../global_deps -name "*.deb" -type f | \
-            grep -v -- -dbg | \
-            grep -v -- -dev | \
-            grep -v -- -doc
-          )
-          for deb_file in $global_deb_files; do
-            cp $deb_file packages
-          done
-          # vpp addition files
-          find scripts/package-build/vpp -name "libvppinfra-dev*.deb" -type f -exec cp {} packages ';'
-          find scripts/package-build/vpp -name "vpp-dev*.deb" -type f -exec cp {} packages ';'
-
-          rm -rf packages/linux-headers-*
           ls -alh packages
 
       - name: Build generic ISO image
