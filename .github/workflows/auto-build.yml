@@ -178,6 +178,10 @@ jobs:
           # add default and dhcpv4 configuration
           cp data/config.boot.default vyos-build/data/live-build-config/includes.chroot/opt/vyatta/etc/
           cp data/config.boot.dhcp vyos-build/data/live-build-config/includes.chroot/opt/vyatta/etc/
+          # avoid "Sources disagree on hashes for supposedly identical version"
+          mkdir -p vyos-build/data/live-build-config/includes.chroot/etc/apt/apt.conf.d
+          echo 'Acquire::AllowInsecureRepositories "true";' | tee -a vyos-build/data/live-build-config/includes.chroot/etc/apt/apt.conf.d/99insecure
+          echo 'Acquire::AllowDowngradeToInsecureRepositories "true";' | tee -a vyos-build/data/live-build-config/includes.chroot/etc/apt/apt.conf.d/99insecure
           # fix kernel config
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-001-kernel_config.patch
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-002-mksquashfs_universal.patch
