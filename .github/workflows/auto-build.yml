@@ -367,7 +367,8 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
-    if: github.ref_name == "${{ github.event.repository.default_branch }}"
+    # if: github.ref_name == "${{ github.event.repository.default_branch }}"
+    if: github.ref_name == 'master'
     steps:
       - uses: actions/checkout@v5
       - name: Clone vyos-build repo
