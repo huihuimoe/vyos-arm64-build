@@ -410,7 +410,7 @@ jobs:
 
       - name: "Release publishing: generate changelog for vyos-1x"
         id: generate_changelog_for_vyos-1x
-        uses: mikepenz/release-changelog-builder-action@v5.4.1
+        uses: mikepenz/release-changelog-builder-action@v6.0.0
         with:
           owner: "vyos"
           repo: "vyos-1x"
@@ -426,7 +426,7 @@ jobs:
 
       - name: "Release publishing: generate changelog for vyos-build"
         id: generate_changelog_for_vyos-build
-        uses: mikepenz/release-changelog-builder-action@v5.4.1
+        uses: mikepenz/release-changelog-builder-action@v6.0.0
         with:
           owner: "vyos"
           repo: "vyos-build"
