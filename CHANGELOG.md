@@ -1,74 +1,52 @@
 ## vyos-1x
-- vpp: T8356: Fix traceback when adding a VPP bridge without members
-   - PR: vyos/vyos-1x#5038
-- T8371: VPP add op-mode command show runtime
-   - PR: vyos/vyos-1x#5042
-- vyos.ifconfig: T8358: clear qdiscs when deleting mirror CLI node
-   - PR: vyos/vyos-1x#5036
-- T8357: Allow prefix vpp for show interfaces
-   - PR: vyos/vyos-1x#5044
-- vpp: T8276: Add verification for virtual interfaces in PPPoE server configuration
-   - PR: vyos/vyos-1x#5021
-- T8186: netflow: disable IPv6 for netflow protocol version 5
-   - PR: vyos/vyos-1x#5035
-- vpp: T8342: Add verification of members for bond and bridge interfaces
-   - PR: vyos/vyos-1x#5028
-- T8351: VPP add GRE tunnel key configuration
-   - PR: vyos/vyos-1x#5045
-- openvpn: T8304: fix migration for des, bf128 or bf256 cipher; use 3des instead
-   - PR: vyos/vyos-1x#5029
-- T8378: arm64: system packages are missing for tacacs auth
-   - PR: vyos/vyos-1x#5050
-- T8383: fix extra space in nftables ipv6 output chain template
-   - PR: vyos/vyos-1x#5051
-- geoip: T5405: T6768: Add VRF support and  check
-   - PR: vyos/vyos-1x#5043
-- T8385: fix config key name in chap-secrets.config_dict.j2
-   - PR: vyos/vyos-1x#5052
-- T8388: bridge STP: fix set_path_priority call
-   - PR: vyos/vyos-1x#5055
-- vpp: T8368: Features nat44 and cgnat should not use the same interfaces
-   - PR: vyos/vyos-1x#5049
-- T8269: add option to silence individual validator output
-   - PR: vyos/vyos-1x#5046
-- T8269: update commit hash for add option silence validators
-   - PR: vyos/vyos-1x#5057
-- T8353: Raise DataUnavailable if no VPP LACP interfaces are configured
-   - PR: vyos/vyos-1x#5056
-- vpp: T8393: Remove xconnect interfaces with bonding member interface
-   - PR: vyos/vyos-1x#5059
-- T8387: fix hardcoded saddr in add-address-to-group
-   - PR: vyos/vyos-1x#5054
-- T8397: macsec: fix source-interface change
-   - PR: vyos/vyos-1x#5060
-- vpp: T8394: Move op-mode command 'show vpp lacp/bridge' to 'show interfaces vpp'
-   - PR: vyos/vyos-1x#5061
-- T8389: fix domain-password md5 for isisd/fabricd
-   - PR: vyos/vyos-1x#5058
-- vpp: T8230: Add support for PPPoE on bonding interfaces
-   - PR: vyos/vyos-1x#5047
-- vpp: T8315: Add support for configuring unsupported NICs and update compatible list
-   - PR: vyos/vyos-1x#5041
-- T8386: fix locat_ts rendering in remote_access.j2
-   - PR: vyos/vyos-1x#5053
-- T8395: VPP add op-mode command for 'show mode'
-   - PR: vyos/vyos-1x#5066
-- T8396: VPP op-mode "show interfaces vpp" missing ipv6 address
-   - PR: vyos/vyos-1x#5065
-- op-mode: T8400: remove calls to tshark binary for PCAP files
-   - PR: vyos/vyos-1x#5063
-- T8352: VPP add op-mode commands to show bonding interfaces
-   - PR: vyos/vyos-1x#5064
+- configverify: T8413: fix issue in duplex shaping (redirect to input interface)
+   - PR: vyos/vyos-1x#5073
+- dhcpv6: T8414: missing prefix-delegation interface constraint
+   - PR: vyos/vyos-1x#5076
+- validators: T8384: ipv6-eui64-prefix: unhandled exception on eui-64 address validation
+   - PR: vyos/vyos-1x#5070
+- T8399: dhcpv6-server: move connectivity/overlap checks inside subnet loop
+   - PR: vyos/vyos-1x#5062
+- T8418: adjust permissions setting of config.boot for case of cloud-init
+   - PR: vyos/vyos-1x#5079
+- login: T8415: show Warning() if default password is used when adding user
+   - PR: vyos/vyos-1x#5077
+- T8188: Preserve static IPv4 addresses flushed by dhclient
+   - PR: vyos/vyos-1x#4968
+- vpp: T8355: Set MTU for vpp interfaces
+   - PR: vyos/vyos-1x#5039
+- T8405: fix noipv6 emitted when dhcpv6-options configured without ipv6 node
+   - PR: vyos/vyos-1x#5071
+- T8405: fix pppoe peer template - remove superfluous +
+   - PR: vyos/vyos-1x#5084
+- firewall: T8277: Resolve migration issue when using  with protocol 
+   - PR: vyos/vyos-1x#5087
+- vpp: T8422: Resolve inconsistent behavior with  configuration option
+   - PR: vyos/vyos-1x#5085
+- T8410: Fix typos and mistakes for operational and configuration commands
+   - PR: vyos/vyos-1x#5082
+- T8379: PBR commit fail with traceback if non-existing VRF added
+   - PR: vyos/vyos-1x#5078
+- vpp: T8432: Fix AttributeError for enabling vpp interface
+   - PR: vyos/vyos-1x#5088
+- vpp: T8286: Uninitialized interfaces raise errors when added to VPP
+   - PR: vyos/vyos-1x#5069
+- vpp: T8416: Prevent interfaces from being assigned to xconnect and bridge/bonding at the same time
+   - PR: vyos/vyos-1x#5080
+- T8404: pppoe: fix TypeError when ipv6 address node exists without autoconf
+   - PR: vyos/vyos-1x#5067
+- pseudo-ethernet: T8434: source-interface does not show bridge or bond interfaces
+   - PR: vyos/vyos-1x#5090
 
 
 ## vyos-build
-- T8364: Add ISO build and config load smoke test workflow
-   - PR: vyos/vyos-build#1141
-- kea: T7853: Offer subnet for any interface address
-   - PR: vyos/vyos-build#1139
-- T8401: remove docker-vyos in favour of OCI (Open Container Image) format
-   - PR: vyos/vyos-build#1143
-- T8400: remove tshark binary from image
-   - PR: vyos/vyos-build#1142
+- T8273: FRR ospfv3: fix LSA when no new BDR elected + remove already merged patch
+   - PR: vyos/vyos-build#1145
+- kea: T8424: Update Kea to 3.0.3
+   - PR: vyos/vyos-build#1147
+- Kernel: T8427: Update Linux Kernel to 6.6.130
+   - PR: vyos/vyos-build#1148
+- T8410: Fix typos and mistakes in scripts and comments
+   - PR: vyos/vyos-build#1146
 
 
