@@ -13,14 +13,14 @@ on:
         description: 'Version number (default: YYYY.MM.DD-TIMESTAMP-rolling)'
         default: ''
       builder_image:
-        description: 'Builder image (default: ghcr.io/huihuimoe/vyos-arm64-build/vyos-builder:current-arm64, official: docker.io/vyos/vyos-build:current-arm64)'
+        description: 'Builder image (default: ghcr.io/huihuimoe/vyos-arm64-build/vyos-builder:rolling-arm64, official: docker.io/vyos/vyos-build:current-arm64)'
         default: ''
 
 env:
   DEBIAN_MIRROR: http://deb.debian.org/debian/
   DEBIAN_SECURITY_MIRROR: http://deb.debian.org/debian-security
   # ~~no package on the official repo~~ fixed
-  VYOS_MIRROR: https://packages.vyos.net/repositories/current/
+  VYOS_MIRROR: https://packages.vyos.net/repositories/rolling/
   # this repo doesn't seem to be updated anymore
   # https://dev.packages.vyos.net/?dir=repositories/current/dists/current
   # VYOS_MIRROR: https://rolling-packages.vyos.net/current/
@@ -33,7 +33,7 @@ jobs:
     container:
       # the official image too old, need to update
       # image: vyos/vyos-build:current-arm64
-      image: ${{ github.event.inputs.builder_image || 'ghcr.io/huihuimoe/vyos-arm64-build/vyos-builder:current-arm64' }}
+      image: ${{ github.event.inputs.builder_image || 'ghcr.io/huihuimoe/vyos-arm64-build/vyos-builder:rolling-arm64' }}
       options: --sysctl net.ipv6.conf.lo.disable_ipv6=0 --privileged --user root
     defaults:
       run:
@@ -154,7 +154,7 @@ jobs:
 
           ### vyos-1x
           git clone --recursive https://github.com/vyos/vyos-1x \
-            -b current --single-branch vyos-build/scripts/package-build/vyos-1x/vyos-1x
+            -b rolling --single-branch vyos-build/scripts/package-build/vyos-1x/vyos-1x
           # fixing unknown internal blob file
           # i don't know what is this file and why it's not in the repo
           # without this file, the build will failed

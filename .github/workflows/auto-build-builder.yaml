@@ -8,10 +8,10 @@ on:
     inputs:
       source_ref:
         description: 'source ref'
-        default: 'current'
+        default: 'rolling'
       image_tag:
         description: 'image tag'
-        default: 'current-arm64'
+        default: 'rolling-arm64'
 
 env:
   REGISTRY: ghcr.io
@@ -33,12 +33,12 @@ jobs:
           if [ -n "${{ github.event.inputs.source_ref }}" ]; then
             echo "source_ref=${{ github.event.inputs.source_ref }}" >> $GITHUB_OUTPUT
           else
-            echo "source_ref=current" >> $GITHUB_OUTPUT
+            echo "source_ref=rolling" >> $GITHUB_OUTPUT
           fi
           if [ -n "${{ github.event.inputs.image_tag }}" ]; then
             echo "image_tag=${{ github.event.inputs.image_tag }}" >> $GITHUB_OUTPUT
           else
-            echo "image_tag=current-arm64" >> $GITHUB_OUTPUT
+            echo "image_tag=rolling-arm64" >> $GITHUB_OUTPUT
           fi
       - name: Checkout repository
         uses: actions/checkout@v6
