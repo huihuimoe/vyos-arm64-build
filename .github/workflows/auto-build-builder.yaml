@@ -41,7 +41,7 @@ jobs:
             echo "image_tag=rolling-arm64" >> $GITHUB_OUTPUT
           fi
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: vyos/vyos-build
           ref: ${{ steps.set_env_variables.outputs.source_ref }}
