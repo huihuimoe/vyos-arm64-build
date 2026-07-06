@@ -30,6 +30,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     permissions:
       contents: write
+      checks: read
+      statuses: read
     container:
       # the official image too old, need to update
       # image: vyos/vyos-build:current-arm64
@@ -43,6 +45,7 @@ jobs:
       build_version: ${{ steps.set_env_variables.outputs.build_version }}
       TIMESTAMP: ${{ steps.set_env_variables.outputs.TIMESTAMP }}
       PREVIOUS_SUCCESS_BUILD_TIMESTAMP: ${{ steps.set_env_variables.outputs.PREVIOUS_SUCCESS_BUILD_TIMESTAMP }}
+      vyos_1x_ref: ${{ steps.find_vyos_1x_ref.outputs.sha }}
       generic_image_iso: ${{ steps.build_generic_iso.outputs.generic_image_iso }}
       generic_image_name: ${{ steps.build_generic_iso.outputs.generic_image_name }}
 
@@ -64,7 +67,8 @@ jobs:
             libnftnl-dev libnl-nf-3-dev libpopt-dev libpcap-dev libbpf-dev \
             bubblewrap git-lfs kpartx clang llvm cmake \
             protobuf-compiler python3-cracklib python3-protobuf \
-            libreadline-dev liblua5.3-dev byacc flex
+            libreadline-dev liblua5.3-dev byacc flex \
+            curl jq
           # python3-cracklib: https://github.com/vyos/vyos-build/commit/e846e68f9f6457865f3e3af92adfe42933555c59
           # protobuf-compiler: https://github.com/vyos/vyos-build/commit/0a6c197226400c4bbe210b435baaa716d4fb8377
           # python3-protobuf: https://github.com/vyos/vyos-build/commit/dd2c245be73c1e83b6ca392924aa549f77c5586e
@@ -92,6 +96,90 @@ jobs:
           fi
           echo "TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
           echo "PREVIOUS_SUCCESS_BUILD_TIMESTAMP=$(cat version.json | jq -r '.[0].timestamp')" >> $GITHUB_OUTPUT
+
+      - name: Find latest successful vyos-1x rolling commit
+        id: find_vyos_1x_ref
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OWNER: vyos
+          REPO: vyos-1x
+          BRANCH: rolling
+        run: |
+          set -euo pipefail
+
+          query='
+          query($owner: String!, $repo: String!, $branch: String!, $endCursor: String) {
+            repository(owner: $owner, name: $repo) {
+              object(expression: $branch) {
+                ... on Commit {
+                  history(first: 100, after: $endCursor) {
+                    nodes {
+                      oid
+                      committedDate
+                      statusCheckRollup {
+                        state
+                      }
+                    }
+                    pageInfo {
+                      hasNextPage
+                      endCursor
+                    }
+                  }
+                }
+              }
+            }
+          }'
+
+          cursor=""
+          max_pages=5
+          for page in $(seq 1 "$max_pages"); do
+            payload="$(jq -n \
+              --arg query "$query" \
+              --arg owner "$OWNER" \
+              --arg repo "$REPO" \
+              --arg branch "$BRANCH" \
+              --arg cursor "$cursor" \
+              '{
+                query: $query,
+                variables: {
+                  owner: $owner,
+                  repo: $repo,
+                  branch: $branch,
+                  endCursor: (if $cursor == "" then null else $cursor end)
+                }
+              }')"
+
+            resp="$(curl --fail-with-body --silent --show-error \
+              -H "Authorization: bearer $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              --data "$payload" \
+              https://api.github.com/graphql)"
+
+            sha="$(
+              jq -r '
+                .data.repository.object.history.nodes[]
+                | select(.statusCheckRollup.state == "SUCCESS")
+                | .oid
+              ' <<<"$resp" | head -n 1
+            )"
+
+            if [ -n "$sha" ]; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              echo "latest successful vyos-1x rolling sha: $sha"
+              exit 0
+            fi
+
+            has_next="$(jq -r '.data.repository.object.history.pageInfo.hasNextPage' <<<"$resp")"
+            if [ "$has_next" != "true" ]; then
+              echo "No successful commit found on vyos/vyos-1x branch: $BRANCH" >&2
+              exit 1
+            fi
+
+            cursor="$(jq -r '.data.repository.object.history.pageInfo.endCursor' <<<"$resp")"
+          done
+
+          echo "No successful commit found on vyos/vyos-1x branch: $BRANCH after $max_pages pages" >&2
+          exit 1
 
       # - name: Build global deps
       #   run: |
@@ -153,8 +241,9 @@ jobs:
           set -ex
 
           ### vyos-1x
-          git clone --recursive https://github.com/vyos/vyos-1x \
-            -b rolling --single-branch vyos-build/scripts/package-build/vyos-1x/vyos-1x
+          git clone https://github.com/vyos/vyos-1x vyos-build/scripts/package-build/vyos-1x/vyos-1x
+          git -C vyos-build/scripts/package-build/vyos-1x/vyos-1x checkout "${{ steps.find_vyos_1x_ref.outputs.sha }}"
+          git -C vyos-build/scripts/package-build/vyos-1x/vyos-1x submodule update --init --recursive
           # fixing unknown internal blob file
           # i don't know what is this file and why it's not in the repo
           # without this file, the build will failed
@@ -384,20 +473,23 @@ jobs:
         with:
           repository: vyos/vyos-1x
           path: vyos-1x
+          ref: ${{ needs.build_generic_iso.outputs.vyos_1x_ref }}
           fetch-depth: 0
       - id: commit_ids
         name: Get commit IDs for changelog
         run: |
           set -ex
           cd vyos-build
+          VYOS_BUILD_REF=$(git rev-parse HEAD)
+          echo "VYOS_BUILD_REF=${VYOS_BUILD_REF}" >> $GITHUB_OUTPUT
           git log --since "${{ needs.build_generic_iso.outputs.PREVIOUS_SUCCESS_BUILD_TIMESTAMP }}" --format="%H" --reverse
           CHANGELOG_COMMIT_VYOS_BUILD=$(git log --since "${{ needs.build_generic_iso.outputs.PREVIOUS_SUCCESS_BUILD_TIMESTAMP }}" --format="%H" --reverse | head -n1)
-          [ -z "$CHANGELOG_COMMIT_VYOS_BUILD" ] && CHANGELOG_COMMIT_VYOS_BUILD="HEAD"
+          [ -z "$CHANGELOG_COMMIT_VYOS_BUILD" ] && CHANGELOG_COMMIT_VYOS_BUILD="$VYOS_BUILD_REF"
           echo "CHANGELOG_COMMIT_VYOS_BUILD=${CHANGELOG_COMMIT_VYOS_BUILD}" >> $GITHUB_OUTPUT
           cd ../vyos-1x
           git log --since "${{ needs.build_generic_iso.outputs.PREVIOUS_SUCCESS_BUILD_TIMESTAMP }}" --format="%H" --reverse
           CHANGELOG_COMMIT_VYOS_1X=$(git log --since "${{ needs.build_generic_iso.outputs.PREVIOUS_SUCCESS_BUILD_TIMESTAMP }}" --format="%H" --reverse | head -n1)
-          [ -z "$COMMIT_VYOS_1X" ] && COMMIT_VYOS_1X="HEAD"
+          [ -z "$CHANGELOG_COMMIT_VYOS_1X" ] && CHANGELOG_COMMIT_VYOS_1X="${{ needs.build_generic_iso.outputs.vyos_1x_ref }}"
           echo "CHANGELOG_COMMIT_VYOS_1X=${CHANGELOG_COMMIT_VYOS_1X}" >> $GITHUB_OUTPUT
 
       - name: "Release publishing: generate changelog for vyos-1x"
@@ -408,7 +500,7 @@ jobs:
           repo: "vyos-1x"
           fetchReviewers: false
           fromTag: ${{ steps.commit_ids.outputs.CHANGELOG_COMMIT_VYOS_1X }}
-          toTag: HEAD
+          toTag: ${{ needs.build_generic_iso.outputs.vyos_1x_ref }}
           configurationJson: |
             {
               "categories": [{"title": "", "labels": []}],
@@ -424,7 +516,7 @@ jobs:
           repo: "vyos-build"
           fetchReviewers: false
           fromTag: ${{ steps.commit_ids.outputs.CHANGELOG_COMMIT_VYOS_BUILD }}
-          toTag: HEAD
+          toTag: ${{ steps.commit_ids.outputs.VYOS_BUILD_REF }}
           configurationJson: |
             {
               "categories": [{"title": "", "labels": []}],
