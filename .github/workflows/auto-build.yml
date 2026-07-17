@@ -263,6 +263,15 @@ jobs:
           patch --no-backup-if-mismatch -p1 -d vyos-build/scripts/package-build/vyos-1x/vyos-1x < data/vyos-1x-006-install-image-reserve-gap.patch
           # https://github.com/vyos/vyos-1x/commit/1478516ae437f19ebeb7d6ff9b83dd74f8e76758
           sed -i 's/all: clean copyright/all: clean/' vyos-build/scripts/package-build/vyos-1x/vyos-1x/Makefile
+          # Commit patched changes so build.py's git checkout won't fail on dirty tree
+          git -C vyos-build/scripts/package-build/vyos-1x/vyos-1x add -A
+          git -C vyos-build/scripts/package-build/vyos-1x/vyos-1x \
+            -c user.name="build" -c user.email="build@localhost" \
+            commit -m "apply arm64 patches"
+          # Point package.toml at the new commit so checkout is a no-op
+          VYOS_1X_PATCHED_SHA=$(git -C vyos-build/scripts/package-build/vyos-1x/vyos-1x rev-parse HEAD)
+          sed -i "s|commit_id = \"rolling\"|commit_id = \"${VYOS_1X_PATCHED_SHA}\"|" \
+            vyos-build/scripts/package-build/vyos-1x/package.toml
 
           ### vyos-build
           # add default and dhcpv4 configuration
