@@ -428,7 +428,6 @@ jobs:
             --custom-package mokutil \
             --custom-package sbsigntool \
             --custom-package grub-efi-arm64-signed \
-            --custom-package shim-signed \
             generic
             # --custom-package cloud-init
           cd build
