@@ -1,66 +1,32 @@
 ## vyos-1x
-- firewall: T9157: add fib-type match for destination/source
-   - PR: vyos/vyos-1x#5372
-- vbash: T7575: Prevent re-declare readonly variable
-   - PR: vyos/vyos-1x#5412
-- monitoring: T9260: relay local frr_exporter metrics via Telegraf
-   - PR: vyos/vyos-1x#5440
-- http-api: T8989: fix X-Client-Verify header passthrough auth bypass
-   - PR: vyos/vyos-1x#5464
-- configquery: T8409: resolve op-mode config paths independent of edit level
-   - PR: vyos/vyos-1x#5451
-- podman: T9297: Encapsulate quadlet key/value parameters
-   - PR: vyos/vyos-1x#5461
-- T8264: add proper support for openvpn 2.7
-   - PR: vyos/vyos-1x#5435
-- tech-support: T5475: do not archive nested mount points below /run
-   - PR: vyos/vyos-1x#5462
-- ethernet: T9228: only warn about unsupported NIC features when node changed
-   - PR: vyos/vyos-1x#5460
-- ifconfig: T9313: fix removal of QinQ sub-interfaces
-   - PR: vyos/vyos-1x#5469
-- smoketest: T9317: restore the adapter offload state before every config test
-   - PR: vyos/vyos-1x#5472
-- keepalived: T9256: keep incomplete FIFO lines between reads
-   - PR: vyos/vyos-1x#5430
-- smoketest: T9315: give up once the system under test stops answering
-   - PR: vyos/vyos-1x#5470
-- ipsec: T9254: do not emit ESN transforms in IKE proposals
-   - PR: vyos/vyos-1x#5429
-- vxlan: T9318: fix VxLan-GPE external-mode validation
-   - PR: vyos/vyos-1x#5473
-- ipsec: T8952: Allow per-peer strongSwan  override for site-to-site peers
-   - PR: vyos/vyos-1x#5475
-- T9323: typos: allow "localed" in the spell check
-   - PR: vyos/vyos-1x#5480
-- T8264: openvpn dco lifecycle
-   - PR: vyos/vyos-1x#5441
-- T9014: bugfixes for arm64 platform
-   - PR: vyos/vyos-1x#5481
+- openvpn: T9334: stop rendering "keepalive 0 0"
+   - PR: vyos/vyos-1x#5488
+- smoketest: T9316: match VRF process names by prefix, not equality
+   - PR: vyos/vyos-1x#5490
+- journald: T9183: stop forwarding journal entries to syslog
+   - PR: vyos/vyos-1x#5486
+- configtree: T9307: serialize libvyosconfig calls across threads
+   - PR: vyos/vyos-1x#5466
+- wwan: T9326: fix dual-stack connect on single-PDN-context networks
+   - PR: vyos/vyos-1x#5482
+- ipsec: T9320: Add deprecation warning for IKEv1 key-exchange
+   - PR: vyos/vyos-1x#5485
+- frr: T9344: remove dead code path when vyos-configd is not running
+   - PR: vyos/vyos-1x#5492
+- vxlan: T9319: add VXLAN-GBP support
+   - PR: vyos/vyos-1x#5484
+- dhcpv6-client: T9349: do not start dhcp6c in debug mode
+   - PR: vyos/vyos-1x#5498
+- bgp: T9345: restore named-VRF AFI validation
+   - PR: vyos/vyos-1x#5494
 
 
 ## vyos-build
-- T9245: podman: add libsystemd-dev to enable automatic health checks
-   - PR: vyos/vyos-build#1278
-- Kernel: T9298: make linux-firmware package architecture aware
-   - PR: vyos/vyos-build#1299
-- vbash: T7575: vyatta-bash 5.2.37 using build system
-   - PR: vyos/vyos-build#1285
-- T9294: strongswan: add security patches
-   - PR: vyos/vyos-build#1300
-- Testsuite: T7575: strip terminal escapes when parsing console output
-   - PR: vyos/vyos-build#1301
-- Testsuite: T9301: read the console type where GRUB keeps it
-   - PR: vyos/vyos-build#1302
-- T9277: image: further reduced installed and ISO image size
-   - PR: vyos/vyos-build#1291
-- openvpn: T8264: build 2.7.5 backport for the in-tree ovpn module
-   - PR: vyos/vyos-build#1281
-- T9321: Update accel-ppp-ng to the 306fff8 version
-   - PR: vyos/vyos-build#1303
-- T9014: use tpm-tis-device for arm64 QEMU smoketests
-   - PR: vyos/vyos-build#1306
-- T9330: openvpn: bump to 2.7.7
-   - PR: vyos/vyos-build#1307
+- vbash: T7575: Resolve completion on root-level op-mode
+   - PR: vyos/vyos-build#1308
+- journald: T9183: delete chroot include config file - use proper systemd override
+   - PR: vyos/vyos-build#1309
+- T5498: Add script to run e2fsck -p to initramfs-tools
+   - PR: vyos/vyos-build#1283
 
 
