@@ -1,70 +1,50 @@
 ## vyos-1x
-- T9274: Add more telegraf configuration
-   - PR: vyos/vyos-1x#5453
-- vpp: T9146: Enable DPDK no-multi-seg when a full frame fits the buffer
-   - PR: vyos/vyos-1x#5376
-- python: T8859: enforce positive integer min_keysize in verify_diffie_hellman_length
-   - PR: vyos/vyos-1x#5194
-- GitHub: T9215: ci workflow improvements for scutum and multi iso downloads
-   - PR: vyos/vyos-1x#5506
-- cli: T9077: insert literal '?' inside quoted values instead of triggering help
-   - PR: vyos/vyos-1x#5328
-- firewall: T9205: fix ruff findings in conf_mode/op_mode firewall.py
-   - PR: vyos/vyos-1x#5398
-- ipsec: T9303: use ipsec-acceleration for VPP algo check
-   - PR: vyos/vyos-1x#5495
-- bgp: T9360: update template to generate 'orf prefix-list both' if send/receive are both configured
-   - PR: vyos/vyos-1x#5507
-- T9323: ci scanner false positives
-   - PR: vyos/vyos-1x#5476
-- smoketest: T9303: move IPsec algorithm compatibility test to VPP testsuite
-   - PR: vyos/vyos-1x#5510
-- accel-ppp: T9357: do not require local users when any-login is configured
-   - PR: vyos/vyos-1x#5505
-- pppoe: T9356: do not fail commit when no Router Advertisement is received
-   - PR: vyos/vyos-1x#5504
-- T8977: Fix regression with is_addr_assigned and is_listen_port_bind_service 
-   - PR: vyos/vyos-1x#5266
-- dns: T9175: make PowerDNS security status poll opt-in
-   - PR: vyos/vyos-1x#5389
-- smoketest: T9361: remove superfluous debug output from config load tests
-   - PR: vyos/vyos-1x#5508
-- T9337: openvpn: stop rendering "ping 0" in site-to-site
-   - PR: vyos/vyos-1x#5511
-- ntp: T8882: add ntp polling options
-   - PR: vyos/vyos-1x#5204
-- pim: T9362: prevent killing an already dead/non-existing PID
-   - PR: vyos/vyos-1x#5509
-- op-mode: T9354: replace "reset connection" with "reconnect interface"
-   - PR: vyos/vyos-1x#5503
-- wwan: T9350: possible dead interface after boot, disconnect does not stick
-   - PR: vyos/vyos-1x#5499
-- T9338: add bgp mpls l3vpn-multi-domain-switching
-   - PR: vyos/vyos-1x#5496
-- openvpn: T8999: improve shared-secret reference errors
-   - PR: vyos/vyos-1x#5397
-- T9363: openvpn: site2site keepalive timeout
-   - PR: vyos/vyos-1x#5512
-- http-api: T8989: Hotfix to enforce audience validation if OIDC is configured
-   - PR: vyos/vyos-1x#5491
-- ethtool: T9353: added basex to check_speed_duplex
-   - PR: vyos/vyos-1x#5501
-- wwan: T7487: identify modem by port ownership, not interface number
-   - PR: vyos/vyos-1x#5483
-- smoketest: T9367: only assert on the leaked flows in the VRF conntrack zone
-   - PR: vyos/vyos-1x#5518
-- wwan: T9326: always pre-negotiate the attach-time PDN type before connect
-   - PR: vyos/vyos-1x#5521
-- T9364: openvpn: default the MTU to 1420 when DCO is enabled
-   - PR: vyos/vyos-1x#5515
+- T9365: add bindings for reference tree path from config path util
+   - PR: vyos/vyos-1x#5513
+- policy: T9379: prefix-list duplicate check in linear time
+   - PR: vyos/vyos-1x#5525
+- webproxy: T9371: fix typo in the squidGuard local-block-url rule ACL
+   - PR: vyos/vyos-1x#5522
+- pppoe: T9395: render default routes via FRR only
+   - PR: vyos/vyos-1x#5532
+- frrender: T9377: do not save the FRR configuration a second time
+   - PR: vyos/vyos-1x#5524
+- config-mgmt: T9399: read the committed config once in the post-commit hooks
+   - PR: vyos/vyos-1x#5533
+- op-mode: T861: add "show secure-boot detail" command
+   - PR: vyos/vyos-1x#5537
+- agents: T9348: update content in AGENTS.md to improve AI generated changes
+   - PR: vyos/vyos-1x#5497
+- T9351: Accel-PPP-NG: Add CLI support for Message Authenticator attribute in Access packets (Blast-RADIUS mitigation)
+   - PR: vyos/vyos-1x#5442
+- bgp: T9404: do not render "bgp default local-preference" when the value is 100
+   - PR: vyos/vyos-1x#5536
+- bgp: T9407: do not render "bgp reject-as-sets" when it is the FRR default
+   - PR: vyos/vyos-1x#5538
+- openvpn: T9370: add chacha20poly1305 data cipher
+   - PR: vyos/vyos-1x#5523
+- router-advert: T9413: add no-remove-on-exit and no-flush-* options
+   - PR: vyos/vyos-1x#5541
+- bgp: T9410: add route-map vrf import under ipv6-unicast
+   - PR: vyos/vyos-1x#5540
+- configd: T9368: reconcile FRR after a DHCP lease without the commit socket
+   - PR: vyos/vyos-1x#5520
 
 
 ## vyos-build
-- T861: Finalize VyOS kernel signing for UEFI Secure Boot
-   - PR: vyos/vyos-build#1313
-- Kernel: T9014: regenerate arm64 base config against Linux 6.18 
-   - PR: vyos/vyos-build#1314
-- Kernel: T9385: Update Linux Kernel to 6.18.54
-   - PR: vyos/vyos-build#1315
+- T9392: Keep kernel objects and don't create source tarball by default
+   - PR: vyos/vyos-build#1316
+- Kernel: T9385: Update Linux Kernel to 6.18.55
+   - PR: vyos/vyos-build#1317
+- Testsuite: T861: boot VyOS CA signed images as-is in Secure Boot test
+   - PR: vyos/vyos-build#1320
+- smoketest: T9402: stop navigating the installed system's GRUB menu
+   - PR: vyos/vyos-build#1319
+- agents: T9348: update content in AGENTS.md to improve AI generated changes
+   - PR: vyos/vyos-build#1310
+- T9400: Fix APT repository key for Debian Trixie release
+   - PR: vyos/vyos-build#1318
+- T9409: Bump accel-ppp-ng version to dd07b23
+   - PR: vyos/vyos-build#1321
 
 
