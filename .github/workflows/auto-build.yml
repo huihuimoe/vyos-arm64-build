@@ -543,7 +543,7 @@ jobs:
           cat CHANGELOG.md
 
       - name: "Release publishing: create version.json"
-        uses: jsdaniell/create-json@v1.2.3
+        uses: jsdaniell/create-json@v1.2.4
         with:
           name: "version.json"
           json: |
