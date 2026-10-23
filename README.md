@@ -6,7 +6,7 @@ Scheduled VyOS image build for arm64 - once per week (currently 01:00 UTC at Fri
 
 Successfull builds will be published as GitHub Release.
 
-The build is untested (no official test suite for arm64), so use with caution!
+The build is untested (GitHub Actions lacks `/dev/kvm` for tests), so use with caution!
 
 For amd64 users, refer the official nightly builds on <https://github.com/vyos/vyos-nightly-build>.
 

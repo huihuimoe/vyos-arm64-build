@@ -46,6 +46,7 @@ jobs:
       TIMESTAMP: ${{ steps.set_env_variables.outputs.TIMESTAMP }}
       PREVIOUS_SUCCESS_BUILD_TIMESTAMP: ${{ steps.set_env_variables.outputs.PREVIOUS_SUCCESS_BUILD_TIMESTAMP }}
       vyos_1x_ref: ${{ steps.find_vyos_1x_ref.outputs.sha }}
+      vyos_build_ref: ${{ steps.fix_vyos_build.outputs.sha }}
       generic_image_iso: ${{ steps.build_generic_iso.outputs.generic_image_iso }}
       generic_image_name: ${{ steps.build_generic_iso.outputs.generic_image_name }}
 
@@ -230,6 +231,7 @@ jobs:
           path: vyos-build
 
       - name: Fix vyos-build
+        id: fix_vyos_build
         env:
           MOK_KEY: ${{ secrets.MOK_KEY }}
           MINISIGN_PRIVATE_KEY: ${{ secrets.MINISIGN_PRIVATE_KEY }}
@@ -239,6 +241,8 @@ jobs:
 
           source <(sed -n '/enable programmable completion/,$p' /etc/skel/.bashrc)
           set -ex
+
+          echo "sha=$(git -C vyos-build rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
           ### vyos-1x
           git clone https://github.com/vyos/vyos-1x vyos-build/scripts/package-build/vyos-1x/vyos-1x
@@ -286,8 +290,8 @@ jobs:
           patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-005-add_vim_link.patch
           # fix on https://github.com/vyos/vyos-build/commit/7e803f5000bd77b8cb172cf31b04146c4fc76c8a
           #patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-006-fix_kernel_sign.patch
-          # sign kernel module but donot sign vmlinuz
-          patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-007-no_sbsign.patch
+          # Use upstream kernel signing and verification for ARM64 EFI images.
+          patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-007-arm64_kernel_sign.patch
           # fixed by https://github.com/vyos/vyos-build/commit/5fe0c17b8c6cb8e244762dcb88eb9c0bf705d9f5
           #patch --no-backup-if-mismatch -p1 -d vyos-build < data/vyos-build-008-fix_live_boot_initramfs_link.patch
           # https://github.com/vyos/vyos-build/commit/ff2a5df902ca31d51eda6744c94cb257d162fcfc
@@ -296,8 +300,9 @@ jobs:
           if [ -f data/mok/MOK.key ]; then
             # https://github.com/vyos/vyos-build/commit/d552f7f8c38d7ad3bd28d9019a58b57e41b07f0b
             # data/live-build-config/includes.chroot/var/lib/shim-signed/mok -> vyos-build/data/certificates
-            cp data/mok/MOK.key vyos-build/data/certificates/vyos-dev-2025-linux.key
-            cp data/mok/MOK.pem vyos-build/data/certificates/vyos-dev-2025-linux.pem
+            CA_YEAR=$(date +%Y)
+            install -m 600 data/mok/MOK.key "vyos-build/data/certificates/vyos-dev-${CA_YEAR}-linux.key"
+            install -m 644 data/mok/MOK.pem "vyos-build/data/certificates/vyos-dev-${CA_YEAR}-linux.pem"
           fi
           # add minisign pubkey
           cp data/huihuimoe-vyos-arm64.minisign.pub vyos-build/data/live-build-config/includes.chroot/usr/share/vyos/keys/
@@ -475,6 +480,7 @@ jobs:
         with:
           repository: vyos/vyos-build
           path: vyos-build
+          ref: ${{ needs.build_generic_iso.outputs.vyos_build_ref }}
           fetch-depth: 0
       - name: Clone vyos-1x source code
         uses: actions/checkout@v7
