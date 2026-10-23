@@ -1,0 +1,39 @@
+diff --git a/data/live-build-config/hooks/live/93-sb-sign-kernel.chroot b/data/live-build-config/hooks/live/93-sb-sign-kernel.chroot
+--- a/data/live-build-config/hooks/live/93-sb-sign-kernel.chroot
++++ b/data/live-build-config/hooks/live/93-sb-sign-kernel.chroot
+@@ -18,6 +18,19 @@
+     exit 1
+ }
+ 
++# ARM64 kernel packages contain a gzip-compressed EFI Image. sbsign needs
++# the uncompressed PE image; leave unsigned builds unchanged.
++prepare_kernel_image() {
++    if [ "$(dpkg --print-architecture)" = "arm64" ] && gzip -t /boot/${VMLINUZ} 2>/dev/null; then
++        echo "I: Decompressing ARM64 Linux Kernel for Secure Boot"
++        gzip -dc /boot/${VMLINUZ} > /boot/${VMLINUZ}.tmp
++        if [ $? -ne 0 ]; then
++            hsm_sign_failed "Decompression of ARM64 Linux Kernel failed"
++        fi
++        mv /boot/${VMLINUZ}.tmp /boot/${VMLINUZ}
++    fi
++}
++
+ # All Linux Kernel modules need to be cryptographically signed
+ find /lib/modules -type f -name \*.ko | while read MODULE; do
+     modinfo ${MODULE} | grep -q "signer:"
+@@ -33,6 +46,7 @@
+     export OPENSSL_CONF="${SB_OPENSSL_CONF}"
+     export YUBIHSM_PKCS11_CONF="${SB_PKCS11_CONF}"
+ 
++    prepare_kernel_image
+     sbsign --engine pkcs11 \
+         --key "pkcs11:object=${PKCS11_KEY_OBJECT};type=private" \
+         --cert ${SB_KERNEL_CERT} \
+@@ -50,6 +64,7 @@
+     echo "I: Linux Kernel signed and signature verified"
+ elif [ -f ${KERNEL_KEY} ] && [ -f ${KERNEL_CERT} ]; then
+     echo "I: Signing Linux Kernel for Secure Boot"
++    prepare_kernel_image
+     sbsign --key ${KERNEL_KEY} --cert ${KERNEL_CERT} \
+         /boot/${VMLINUZ} --output /boot/${VMLINUZ}.tmp
+     if [ $? -ne 0 ]; then
