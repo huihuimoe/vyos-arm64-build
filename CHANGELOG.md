@@ -1,80 +1,52 @@
 ## vyos-1x
-- geoip: T9495: fix PATH for geoip cron task
-   - PR: vyos/vyos-1x#5587
-- pppoe: T9533: Fix default route handling in connect-on-demand mode
-   - PR: vyos/vyos-1x#5606
-- mpls: T9534: Fix rendering of LDP neighbor ttl-security disable
-   - PR: vyos/vyos-1x#5607
-- pki: T9531: Fix OpenConnect ACME certificate detection with HAProxy
-   - PR: vyos/vyos-1x#5605
-- op-mode: T9538: fix interface check in reset wireguard
-   - PR: vyos/vyos-1x#5608
-- nat64: T9536: Fix check for only one source rule
-   - PR: vyos/vyos-1x#5609
-- nhrp: T9546: Remove nftables rules when NHRP is deleted
-   - PR: vyos/vyos-1x#5613
-- firewall: T9549: Fix default-firewall jump for VRF zone in local zone
-   - PR: vyos/vyos-1x#5614
-- zabbix-agent: T9545: Fix PSK authentication mode validation
-   - PR: vyos/vyos-1x#5611
-- firewall: T9544: Fix fqdn match in prerouting raw rules
-   - PR: vyos/vyos-1x#5610
-- frrender: T9442: cache the FRR configuration only after it was applied
-   - PR: vyos/vyos-1x#5591
-- T3871: bind interface names to hardware slots instead of hw-id
-   - PR: vyos/vyos-1x#5479
-- ipsec: T9543: start a peer again on reset when connection-type is unset
-   - PR: vyos/vyos-1x#5615
-- GitHub: T9554: run ISO integration smoketests as a matrix
-   - PR: vyos/vyos-1x#5617
-- utils: T9553: do not assume host forwarding state in sysctl read test
-   - PR: vyos/vyos-1x#5616
-- static: T9482: handle a blackhole next to a next-hop of the same distance
-   - PR: vyos/vyos-1x#5582
-- ha: T9557: Verify real-server port for every virtual-server
-   - PR: vyos/vyos-1x#5620
-- ipsec: T9542: replace removed ipsec script with swanctl and systemctl
-   - PR: vyos/vyos-1x#5612
-- op-mode: T9496: verify secure-boot signature when using "add system image"
-   - PR: vyos/vyos-1x#5602
-- T9477: remove no longer needed executable bit from conf_mode/migration scripts 
-   - PR: vyos/vyos-1x#5588
-- xml: T9555: replace inline nodes duplicating existing include files
-   - PR: vyos/vyos-1x#5618
-- interfaces: T3871: drop executable bit from 34-to-35 migration script
-   - PR: vyos/vyos-1x#5624
-- openvpn: T9560: Render tls-auth in site-to-site mode
-   - PR: vyos/vyos-1x#5621
-- T9562: Fix typo in vyos.config passing method instead of function value in is_multi/is_tag/is_leaf
-   - PR: vyos/vyos-1x#5622
-- serial: T9567: honor booted serial console during 31 -> 32 migration
-   - PR: vyos/vyos-1x#5627
-- webproxy: T9566: Pass LDAP bind password via file instead of command line
-   - PR: vyos/vyos-1x#5626
-- openvpn: T9469: add TLS key to generated client config
-   - PR: vyos/vyos-1x#5567
-- T9498: update vyos1x-config commit hash for update of validate_tree
-   - PR: vyos/vyos-1x#5586
-- interfaces: T6393: fix commit failure when the mirror or redirect target does not exist yet
-   - PR: vyos/vyos-1x#5517
+- https: T9559: fix bogus port conflict with "vrf default"
+   - PR: vyos/vyos-1x#5631
+- tunnel: T9193: honor remote and source-interface in GRE key uniqueness check
+   - PR: vyos/vyos-1x#5392
+- utils: T9322: validate the address is_intf_addr_assigned() is given
+   - PR: vyos/vyos-1x#5477
+- nhrp: T9585: Fix verify() never validating NHRP tunnels
+   - PR: vyos/vyos-1x#5633
+- http-api: T9588: Keep config strings out of world-readable /tmp
+   - PR: vyos/vyos-1x#5634
+- T9582: Fix OpenConnect RADIUS accounting server missing from radius_servers
+   - PR: vyos/vyos-1x#5632
+- telegraf: T9569: Pass InfluxDB token via a root-only environment file
+   - PR: vyos/vyos-1x#5629
+- wwan: T9388: apply a static bearer's address/gateway/DNS directly instead of DHCP(v6)/SLAAC
+   - PR: vyos/vyos-1x#5526
+- debian: T9587: restore SUID bit on vyos-op-run
+   - PR: vyos/vyos-1x#5638
+- telegraf: T9601: Pass Azure Data Explorer credentials via the environment file
+   - PR: vyos/vyos-1x#5640
+- T9590: fix order of set perms/ownership and first write in utils write_file
+   - PR: vyos/vyos-1x#5636
+- T9607: Synchronize the list of branches across all scripts
+   - PR: vyos/vyos-1x#5644
 
 
 ## vyos-build
-- Kernel: T9550: Update Linux Kernel to 6.18.60
-   - PR: vyos/vyos-build#1339
-- T3871: bind interface names to hardware slots instead of hw-id
-   - PR: vyos/vyos-build#1305
-- Testsuite: T3871: attach NICs to the root bus of the emulated machine
-   - PR: vyos/vyos-build#1342
-- hooks: T9553: drop file capabilities while running live-build chroot hooks
-   - PR: vyos/vyos-build#1340
-- build: T9547: rolling images use the 999 default version instead of 1.5
-   - PR: vyos/vyos-build#1341
-- isc-kea: T8461: drop VLAN tagged packets on the raw socket of the parent interface
-   - PR: vyos/vyos-build#1338
-- T8050: FRR: add Split Horizon Filter
-   - PR: vyos/vyos-build#1343
-- Kernel: T9577: Intel NIC drivers must honour commit_id from package.toml
-   - PR: vyos/vyos-build#1344
+- github: T9579: trigger wide-dhcpv6 build from its own path filter
+   - PR: vyos/vyos-build#1345
+- Kernel: T9591: add VyOS internal revision to the kernel release string
+   - PR: vyos/vyos-build#1347
+- Kernel: T9598: Update Linux Kernel to 6.18.62
+   - PR: vyos/vyos-build#1349
+- smoketest: T9402: more robust GRUB menu selection
+   - PR: vyos/vyos-build#1333
+- T9609: openssl: bump to 3.0.22-1~deb12u2
+   - PR: vyos/vyos-build#1352
+- pdns-recursor: T9608: use a VyOS version suffix for the rebuild
+   - PR: vyos/vyos-build#1351
+- T9607: Synchronize the list of branches across all scripts [vyos-build]
+   - PR: vyos/vyos-build#1354
+- Kernel: T9595: replace deprecated MLNX_OFED with DOCA-OFED
+   - PR: vyos/vyos-build#1348
+- frr: T9451: Remove extra processing on router bgp
+   - PR: vyos/vyos-build#1353
+- Kernel: T9580: unify kexec/kdump and PPP options in common config fragments
+   - PR: vyos/vyos-build#1346
+- frr: T9606: update commit hash which includes ospf_auth_check_md5_digest fix
+   - PR: vyos/vyos-build#1355
 
 
